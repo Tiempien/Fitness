@@ -1,0 +1,14 @@
+services:
+  sftp:
+      image: atmoz/sftp
+      container_name: sftp-beeldbank
+      volumes:
+          - ./uploads/beeldbank:/home/admin/beeldbank
+          - ./uploads/product-images:/home/admin/product-images
+      ports:
+          - "2222:22"
+      command: admin:H3cteYQpuBNXgwVLvCtsXP7nLh2OY:1001
+
+volumes:
+    beeldbank:
+    productImages:

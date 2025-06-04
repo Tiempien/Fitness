@@ -1,0 +1,53 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev --host",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.787.0",
+    "@compodium/nuxt": "^0.1.0-beta.10",
+    "@craftzing/akeneo-api": "^1.0.12",
+    "@fullcalendar/core": "^6.1.17",
+    "@fullcalendar/daygrid": "^6.1.17",
+    "@fullcalendar/interaction": "^6.1.17",
+    "@fullcalendar/list": "^6.1.10",
+    "@fullcalendar/resource-timegrid": "^6.1.15",
+    "@fullcalendar/timegrid": "^6.1.17",
+    "@fullcalendar/vue3": "^6.1.17",
+    "@nuxt/ui": "^3.1.1",
+    "@nuxtjs/color-mode": "^3.5.2",
+    "@nuxtjs/tailwindcss": "^6.13.1",
+    "@types/bcrypt": "^5.0.2",
+    "axios": "^1.8.3",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "fullcalendar": "^6.1.15",
+    "glob": "^11.0.1",
+    "jimp": "^1.6.0",
+    "jwt-decode": "^4.0.0",
+    "mariadb": "^3.4.0",
+    "mysql2": "^3.14.0",
+    "nuxt": "^3.15.4",
+    "nuxt-auth-utils": "^0.5.16",
+    "onesignal-cordova-plugin": "^5.2.13",
+    "sequelize": "^6.37.6",
+    "sharp": "^0.34.1",
+    "tailwindcss": "^4.1.6",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@iconify-json/lucide": "^1.2.42",
+    "@nuxt/eslint": "^1.2.0",
+    "eslint": "^9.22.0",
+    "sequelize-cli": "^6.6.2",
+    "typescript": "^5.8.2"
+  }
+}

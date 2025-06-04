@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: node-beeldbank
+    build: .
+    ports:
+      - "1337:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - DB_HOST=mariadb
+      - DB_PORT=3306 
+      - DB_NAME=${DB_NAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    command: ["sh", "/app/entrypoint.sh"]
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    networks:
+      - mariadb_network
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb-beeldbank
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+#    ports:
+#      - "3307:3306"
+    restart: unless-stopped
+    networks:
+      - mariadb_network
+
+volumes:
+  mariadb-data:
+
+networks:
+  mariadb_network:
+    driver: bridge

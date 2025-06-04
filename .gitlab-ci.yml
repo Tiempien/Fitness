@@ -1,0 +1,51 @@
+stages:
+  - deploy-test
+
+deploy-test:
+  stage: deploy-test
+  image: docker:24.0.5
+
+  before_script:
+    # Install SSH client and Docker
+    - apk add openssh-client rsync gettext openssl
+
+  script:
+    - NEW_BRANCH="${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME//\//-}"
+    - echo $NEW_BRANCH
+    - echo "This job runs when an MR is merged to develop"
+
+    # Set environment variables
+    - cp .env.example .env
+    - sed -i "s|NUXT_MATERIALO_EMAIL=.*|NUXT_MATERIALO_EMAIL=${MATERIALO_EMAIL}|" .env
+    - sed -i "s|NUXT_MATERIALO_PASSWORD=.*|NUXT_MATERIALO_PASSWORD=${MATERIALO_PASSWORD}|" .env
+    - sed -i "s|NUXT_SESSION_PASSWORD=.*|NUXT_SESSION_PASSWORD=${NUXT_SESSION_PASSWORD}|" .env
+    - sed -i "s|DB_NAME=.*|DB_NAME=${DB_NAME}|" .env
+    - sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|" .env
+
+    # SSH setup: Add SSH private key and known hosts
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - eval `ssh-agent`
+    - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 -d)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+    # SSH into the test server and deploy
+    - echo "Deploying to test server"
+    - rsync -e "ssh -o StrictHostKeyChecking=no" --chown=$SSH_USERNAME:$SSH_USERNAME -r --exclude=.git --exclude=.gitlab-ci.yml --exclude=.gitlab-ci.yaml --exclude=README.md $PWD $SSH_USERNAME@$SERVER_IP:~/
+    
+    # Genereer SSL certificaat na rsync
+    - ssh $SSH_USERNAME@$SERVER_IP "cd ~/$CI_PROJECT_NAME; openssl req -newkey rsa:2048 -nodes -keyout ~/server.key -x509 -days 365 -out ~/server.crt -subj '/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=example.com'"
+
+    # Build and run Docker Composer
+    - ssh $SSH_USERNAME@$SERVER_IP "cd ~/$CI_PROJECT_NAME; docker compose pull && docker compose up -d"  
+
+    - echo "Branch deployed at https://$SERVER_IP:1337/"
+
+  environment:
+    name: staging
+    url: https://$SERVER_IP:1337
+
+  # rules:
+  #   - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH == "develop"
